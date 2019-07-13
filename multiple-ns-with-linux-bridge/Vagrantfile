@@ -1,0 +1,54 @@
+Vagrant.configure("2") do |config|
+
+  #config.vm.box = "debian/jessie64"
+  config.vm.box = "ubuntu/bionic64"
+
+   config.vm.provision "shell", inline: <<-SHELL
+        sudo apt update
+        sudo apt install python3.6
+   SHELL
+
+   config.vm.provision "shell", inline: "python3 /vagrant/main.py"
+
+   config.vm.provision "shell", inline: <<-SHELL
+
+    # Create 2 namespaces
+    # ip netns add ns1
+    # ip netns add ns2
+
+    # Create the bridge
+    # BRIDGE=br-test
+    # brctl addbr $BRIDGE
+    # brctl stp   $BRIDGE off
+    # ip link set dev $BRIDGE up
+
+    # ---------- Configure port 1 in the bridge ---------- #
+    # create a port pair
+    # ip link add tap1 type veth peer name br-tap1
+
+    # attach one side to linuxbridge
+    # brctl addif br-test br-tap1
+
+    # attach the other side to namespace
+    # ip link set tap1 netns ns1
+
+    # set the ports to up
+    # ip netns exec ns1 ip link set dev tap1 up
+    # ip link set dev br-tap1 up
+
+
+    # ---------- Configure port 2 in the bridge ---------- #
+    # create a port pair
+    # ip link add tap2 type veth peer name br-tap2
+
+    # attach one side to linuxbridge
+    # brctl addif br-test br-tap2
+
+    # attach the other side to namespace
+    # ip link set tap2 netns ns2
+
+    # set the ports to up
+    # ip netns exec ns2 ip link set dev tap2 up
+    #ip link set dev br-tap2 up
+   SHELL
+end
